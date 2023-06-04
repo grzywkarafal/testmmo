@@ -1,0 +1,41 @@
+[gd_scene load_steps=7 format=3 uid="uid://xymvouxq3qgo"]
+
+[ext_resource type="Script" path="res://player.gd" id="1_0gy7u"]
+[ext_resource type="Texture2D" uid="uid://dhpayjox0xd8l" path="res://icon.svg" id="1_cyak5"]
+[ext_resource type="Script" path="res://visibility_sync_2d.gd" id="3_ngkfo"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qjy07"]
+size = Vector2(64, 64)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_o28fd"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/sync = true
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_nowpq"]
+radius = 132.639
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_0gy7u")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_cyak5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_qjy07")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="VisibilitySync2D" type="MultiplayerSynchronizer" parent="Area2D"]
+root_path = NodePath("../..")
+replication_interval = 1.082
+replication_config = SubResource("SceneReplicationConfig_o28fd")
+public_visibility = false
+script = ExtResource("3_ngkfo")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_nowpq")
+
+[connection signal="body_entered" from="Area2D" to="Area2D/VisibilitySync2D" method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="Area2D/VisibilitySync2D" method="_on_area_2d_body_exited"]
